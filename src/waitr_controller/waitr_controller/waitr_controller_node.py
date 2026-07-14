@@ -1,7 +1,9 @@
 import rclpy
+import time
 from rclpy.node import Node
 
 from .order import Order
+from .restaurant_map import TABLES
 from .order_manager import OrderManager
 from .state_machine import StateMachine, RobotState
 from std_msgs.msg import String
@@ -27,7 +29,16 @@ class WaitRController(Node):
 
     def process_order(self, order):
         self.order_manager.add_order(order)
-
+    def get_preparation_time(self, item):
+        # Simulate preparation time based on the item
+        prep_times = {
+            "Pizza": 5,
+            "Burger": 3,
+            "Sushi": 7,
+            "Pasta": 4,
+            "Coffee": 2,
+        }
+        return prep_times.get(item, 5)  # Default to 5 seconds if item not found
     
     def serve_orders(self):
       while self.order_manager.pending_orders() > 0:
@@ -41,11 +52,28 @@ class WaitRController(Node):
         self.get_logger().info("🏠 Going to Kitchen")
         self.state_machine.change_state(RobotState.GO_TO_KITCHEN)
 
-        self.get_logger().info(f"🍕 Picking {order.items[0]}")
+        item = order.items[0]
+        prep_time = self.get_preparation_time(item)
+        
+        self.get_logger().info(
+        f"🍳 Preparing {item} for {prep_time} seconds"
+        )
+
+        time.sleep(prep_time)
+
         self.state_machine.change_state(RobotState.PICK_FOOD)
 
+        destination = TABLES.get(order.table_number)
+
+        print("DEBUG TABLE NUMBER:", order.table_number)
+        print("DEBUG DESTINATION:", destination)
+
         self.get_logger().info(
-            f"🧭 Navigating to Table {order.table_number}"
+        f"🧭 Navigating to Table {order.table_number}"
+        )
+
+        self.get_logger().info(
+        f"📍 Destination Coordinates: {destination}"
         )
         self.state_machine.change_state(RobotState.GO_TO_TABLE)
 

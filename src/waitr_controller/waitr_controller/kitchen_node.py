@@ -1,4 +1,5 @@
 import rclpy
+import time
 from rclpy.node import Node
 from std_msgs.msg import String
 
@@ -14,25 +15,24 @@ class KitchenNode(Node):
             10
         )
 
-        self.timer = self.create_timer(5.0, self.send_order)
-
-        self.order_sent = False
-
         self.get_logger().info("🍳 Kitchen Ready!")
 
-    def send_order(self):
+        time.sleep(2)
 
-        if self.order_sent:
-            return
-
-        msg = String()
-        msg.data = "1001,3,Pizza"
-
-        self.publisher.publish(msg)
-
-        self.get_logger().info(f"📤 Sent: {msg.data}")
-
-        self.order_sent = True
+        orders = [
+            "1001,3,Pizza",
+            "1002,2,Burger",
+            "1003,1,Sushi",
+            "1004,4,Pasta",
+            "1005,2,Coffee",
+        ]
+        for order in orders:
+            msg = String()
+            msg.data = order
+            self.publisher.publish(msg)
+            self.get_logger().info(f"📤 Sent: {order}")
+            time.sleep(2)
+    
 
 
 def main(args=None):
