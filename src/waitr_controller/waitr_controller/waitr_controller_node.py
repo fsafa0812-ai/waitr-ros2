@@ -28,13 +28,15 @@ class WaitRController(Node):
     def process_order(self, order):
         self.order_manager.add_order(order)
 
+    
     def serve_orders(self):
-        def serve_orders(self):
-    while self.order_manager.pending_orders() > 0:
+      while self.order_manager.pending_orders() > 0:
 
         order = self.order_manager.get_next_order()
 
-        self.get_logger().info( f"🚀 Serving Order #{order.order_id}" )
+        self.get_logger().info(
+            f"🚀 Serving Order #{order.order_id}"
+        )
 
         self.get_logger().info("🏠 Going to Kitchen")
         self.state_machine.change_state(RobotState.GO_TO_KITCHEN)
@@ -42,10 +44,14 @@ class WaitRController(Node):
         self.get_logger().info(f"🍕 Picking {order.items[0]}")
         self.state_machine.change_state(RobotState.PICK_FOOD)
 
-        self.get_logger().info(f"🧭 Navigating to Table {order.table_number}")
+        self.get_logger().info(
+            f"🧭 Navigating to Table {order.table_number}"
+        )
         self.state_machine.change_state(RobotState.GO_TO_TABLE)
 
-        self.get_logger().info(f"🍽 Delivering {order.items[0]} to Table {order.table_number}" )
+        self.get_logger().info(
+            f"🍽 Delivering {order.items[0]} to Table {order.table_number}"
+        )
         self.state_machine.change_state(RobotState.DELIVER_FOOD)
 
         self.get_logger().info("🏠 Returning to Kitchen")
