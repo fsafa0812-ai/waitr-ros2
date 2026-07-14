@@ -23,7 +23,9 @@ setup(
         ],
     },
     entry_points={
-        'console_scripts': [
+        'console_scripts': ['waitr_node = waitr_controller.waitr_node:main',
+        'kitchen_node = waitr_controller.kitchen_node:main',
+        'waitr_controller_node = waitr_controller.waitr_controller_node:main',
         ],
     },
 )
